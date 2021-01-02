@@ -31,7 +31,7 @@ const rankNames = {
 const rankStatImage = (msg, discord, user) => {
   //post rank from database
   let embed = new discord.MessageEmbed()
-    .setColor("#0099ff")
+    .setColor("#ff4656")
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
     .setThumbnail(
       `https://valorant-sw.s3.amazonaws.com/rank_badges/${user.valorant_rank}.png`
@@ -82,7 +82,6 @@ module.exports = {
       entitlements_token,
       valorant_id
     );
-    console.log(stats);
     //check if user already exists
     const userExists = await api.checkUserExist(msg.author.id);
     if (userExists) {
