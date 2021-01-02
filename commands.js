@@ -32,9 +32,10 @@ const rankStatImage = (msg, discord, user) => {
   //post rank from database
   let embed = new discord.MessageEmbed()
     .setColor("#ff4656")
+    .setTitle(user.valorant_name)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
     .setThumbnail(
-      `https://valorant-sw.s3.amazonaws.com/rank_badges/${user.valorant_rank}.png`
+      `https://valorant-sw.s3.amazonaws.com/ranks/${user.valorant_rank}.png`
     )
     .addFields(
       {
@@ -82,6 +83,13 @@ module.exports = {
       entitlements_token,
       valorant_id
     );
+
+    const valorant_name = await api.getValorantGameName(
+      access_token,
+      entitlements_token,
+      valorant_id
+    );
+
     //check if user already exists
     const userExists = await api.checkUserExist(msg.author.id);
     if (userExists) {
@@ -91,6 +99,7 @@ module.exports = {
         access_token,
         entitlements_token,
         valorant_id,
+        valorant_name,
         stats.valorant_rank,
         stats.valorant_points,
         stats.valorant_elo
@@ -104,6 +113,7 @@ module.exports = {
         access_token,
         entitlements_token,
         valorant_id,
+        valorant_name,
         stats.valorant_rank,
         stats.valorant_points,
         stats.valorant_elo
@@ -141,6 +151,7 @@ module.exports = {
         user.access_token,
         user.entitlements_token,
         user.valorant_id,
+        user.valorant_name,
         newStats.valorant_rank,
         newStats.valorant_points,
         newStats.valorant_elo

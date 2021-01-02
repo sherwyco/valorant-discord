@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  valorant_name: {
+    type: String,
+    required: false
+  },
   valorant_rank: {
     type: Number,
     required: false

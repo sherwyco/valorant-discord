@@ -38,6 +38,7 @@ router.post("/register", async (req, res) => {
     access_token: req.body.access_token,
     entitlements_token: req.body.entitlements_token,
     valorant_id: req.body.valorant_id,
+    valorant_name: req.body.valorant_name,
     valorant_rank: req.body.valorant_rank,
     valorant_points: req.body.valorant_points,
     valorant_elo: req.body.valorant_elo
@@ -61,6 +62,9 @@ router.patch("/:discord_id", getUser, async (req, res) => {
   }
   if (req.body.valorant_id != null) {
     res.user.valorant_id = req.body.valorant_id;
+  }
+  if (req.body.valorant_name != null) {
+    res.user.valorant_name = req.body.valorant_name;
   }
   if (req.body.valorant_rank != null) {
     res.user.valorant_rank = req.body.valorant_rank;

@@ -70,6 +70,7 @@ const registerUser = async (
   access_token,
   entitlements_token,
   valorant_id,
+  valorant_name,
   valorant_rank,
   valorant_points,
   valorant_elo
@@ -80,6 +81,7 @@ const registerUser = async (
       access_token: access_token,
       entitlements_token: entitlements_token,
       valorant_id: valorant_id,
+      valorant_name: valorant_name,
       valorant_rank: valorant_rank,
       valorant_points: valorant_points,
       valorant_elo: valorant_elo
@@ -112,6 +114,7 @@ const updateUser = async (
   access_token,
   entitlements_token,
   valorant_id,
+  valorant_name,
   valorant_rank,
   valorant_points,
   valorant_elo
@@ -121,6 +124,7 @@ const updateUser = async (
       access_token: access_token,
       entitlements_token: entitlements_token,
       valorant_id: valorant_id,
+      valorant_name: valorant_name,
       valorant_rank: valorant_rank,
       valorant_points: valorant_points,
       valorant_elo: valorant_elo
@@ -151,6 +155,32 @@ const getValorantUserId = async (access_token, entitlements_token) => {
     })
     .catch(err => {
       console.log(err.response.data);
+      return null;
+    });
+  return response;
+};
+
+const getValorantGameName = async (
+  access_token,
+  entitlements_token,
+  valorant_id
+) => {
+  let instance = axios.create({
+    headers: {
+      post: {
+        Authorization: "Bearer " + access_token,
+        "X-Riot-Entitlements-JWT": entitlements_token
+      }
+    }
+  });
+
+  const response = await instance
+    .put("https://pd.NA.a.pvp.net/name-service/v2/players", [valorant_id])
+    .then(res => {
+      return res.data[0].GameName + "#" + res.data[0].TagLine;
+    })
+    .catch(err => {
+      console.log(err);
       return null;
     });
   return response;
@@ -232,5 +262,6 @@ module.exports = {
   updateUser,
   getValorantUserId,
   getCompetitiveHistory,
-  getRankStats
+  getRankStats,
+  getValorantGameName
 };
