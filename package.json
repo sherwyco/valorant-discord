@@ -1,0 +1,25 @@
+{
+  "name": "valorant-bot-rest-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sherwin wyco",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "axios-cookiejar-support": "^1.0.1",
+    "cors": "^2.8.5",
+    "discord.js": "^12.5.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.9",
+    "tough-cookie": "^4.0.0"
+  }
+}
