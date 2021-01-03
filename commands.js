@@ -50,6 +50,33 @@ const rankStatImage = (msg, discord, user) => {
   return msg.channel.send(embed);
 };
 
+const compMatches = (matches, limit) => {
+  if (limit < 1) return "Cant show 0 matches";
+  let str = "```";
+  let i = 0;
+  for (const match of matches) {
+    if (match.CompetitiveMovement != "MOVEMENT_UNKNOWN") {
+      var date = new Date(match.MatchStartTime).toLocaleString("en-US");
+      str +=
+        "\n\nGame " +
+        (i + 1) +
+        "\nMap: " +
+        match.MapID.substring(match.MapID.lastIndexOf("/") + 1) +
+        "\nDate: " +
+        date +
+        "\nPoints Before: " +
+        match.TierProgressBeforeUpdate +
+        "\nPoints After: " +
+        match.TierProgressAfterUpdate +
+        "\nDifference: " +
+        (match.TierProgressAfterUpdate - match.TierProgressBeforeUpdate);
+      i++;
+    }
+    if (i == limit) break;
+  }
+  return str + "```";
+};
+
 module.exports = {
   login: async function(msg) {
     if (msg.channel.type !== "dm") return;
@@ -125,7 +152,7 @@ module.exports = {
   help: function(msg) {
     msg.author.send(
       "You need to login first to be able to use the commands below." +
-        "\n\n`-login yourusername yourpassword` to log in. Simply login again to view a different account. \n\n`-rank` will show your ranking stats. \n\n`-update` will update your rank stats \n\n`-matches` will show your competitive match history"
+        "\n\n`-login yourusername yourpassword` to log in. Simply login again to view a different account. \n\n`-rank` will show your ranking stats. \n\n`-update` will update your rank stats \n\n`-last` will show your last competitive match \n\n`-matches` will show your competitive match history up to 5"
     );
   },
   rank: async function(msg, discord) {
@@ -174,34 +201,31 @@ module.exports = {
         user.entitlements_token,
         user.valorant_id
       );
-      if (matches == null)
+      if (matches == null) {
         return msg.channel.send("Session expired! Please login again.");
-      let str = "```";
-      let i = 1;
-      for (const match of matches) {
-        if (match.CompetitiveMovement != "MOVEMENT_UNKNOWN") {
-          var date = new Date(match.MatchStartTime).toLocaleString("en-US");
-          str +=
-            "\n\nGame " +
-            i +
-            "\nMap: " +
-            match.MapID.substring(match.MapID.lastIndexOf("/") + 1) +
-            "\nDate: " +
-            date +
-            "\nPoints Before: " +
-            match.TierProgressBeforeUpdate +
-            "\nPoints After: " +
-            match.TierProgressAfterUpdate +
-            "\nDifference: " +
-            (match.TierProgressAfterUpdate - match.TierProgressBeforeUpdate);
-          i++;
-        }
+      } else {
+        return msg.channel.send(compMatches(matches, 5));
       }
-      if (i == 1) {
-        return msg.channel.send("No Competitive Match History.");
-      }
-      return msg.channel.send(str + "```");
     } else {
+      //must be logged in
+      return msg.channel.send("Please log in to view your match history");
+    }
+  },
+  last: async function(msg) {
+    const user = await api.getUser(msg.author.id);
+    if (user != null) {
+      const matches = await api.getCompetitiveHistory(
+        user.access_token,
+        user.entitlements_token,
+        user.valorant_id
+      );
+      if (matches == null) {
+        return msg.channel.send("Session expired! Please login again.");
+      } else {
+        return msg.channel.send(compMatches(matches, 1));
+      }
+    } else {
+      //must be logged in
       return msg.channel.send("Please log in to view your match history");
     }
   }

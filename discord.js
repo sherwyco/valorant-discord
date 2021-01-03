@@ -44,6 +44,9 @@ client.on("message", msg => {
     case "matches":
       commands.matches(msg);
       break;
+    case "last":
+      commands.last(msg);
+      break;
     default:
       break;
   }
