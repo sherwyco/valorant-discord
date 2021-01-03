@@ -28,23 +28,32 @@ const rankNames = {
   "24": "Radiant"
 };
 
-const rankStatImage = (msg, discord, user) => {
+const rankStatImage = (msg, discord, user, matchPointsSummary) => {
   //post rank from database
   let embed = new discord.MessageEmbed()
     .setColor("#ff4656")
     .setTitle(user.valorant_name)
     .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+    .setURL(
+      "https://blitz.gg/valorant/profile/" +
+        user.valorant_name.replace("#", "-")
+    )
     .setThumbnail(
       `https://valorant-sw.s3.amazonaws.com/ranks/${user.valorant_rank}.png`
     )
     .addFields(
       {
-        name: "Rank",
+        name: " Rank ",
         value: rankNames[`${user.valorant_rank}`],
         inline: true
       },
-      { name: "Points", value: user.valorant_points, inline: true },
-      { name: "ELO", value: user.valorant_elo, inline: true }
+      { name: " Points ", value: user.valorant_points, inline: true },
+      { name: " ELO ", value: user.valorant_elo, inline: true },
+      {
+        name: " Previous Match Results ",
+        value: matchPointsSummary.join(", "),
+        inline: false
+      }
     )
     .setTimestamp();
   return msg.channel.send(embed);
@@ -75,6 +84,21 @@ const compMatches = (matches, limit) => {
     if (i == limit) break;
   }
   return str + "```";
+};
+
+const matchPointsSummary = matches => {
+  let matchPoints = [];
+  let i = 0;
+  for (const match of matches) {
+    if (match.CompetitiveMovement != "MOVEMENT_UNKNOWN") {
+      matchPoints.push(
+        match.TierProgressAfterUpdate - match.TierProgressBeforeUpdate
+      );
+      i++;
+    }
+    if (i == 3) break;
+  }
+  return matchPoints;
 };
 
 module.exports = {
@@ -158,7 +182,16 @@ module.exports = {
   rank: async function(msg, discord) {
     const user = await api.getUser(msg.author.id);
     if (user != null) {
-      rankStatImage(msg, discord, user);
+      const matches = await api.getCompetitiveHistory(
+        user.access_token,
+        user.entitlements_token,
+        user.valorant_id
+      );
+      if (matches != null) {
+        rankStatImage(msg, discord, user, matchPointsSummary(matches));
+      } else {
+        msg.channel.send("Session id expired. Please login again.");
+      }
     } else {
       return msg.channel.send("Please log in to get your rank");
     }
@@ -186,7 +219,18 @@ module.exports = {
       if (update) {
         //succeed, paste new rank stat embed
         msg.channel.send("Successfully updated!");
-        rankStatImage(msg, discord, user);
+        const matches = await api.getCompetitiveHistory(
+          user.access_token,
+          user.entitlements_token,
+          user.valorant_id
+        );
+        if (matches != null) {
+          rankStatImage(msg, discord, user, matchPointsSummary(matches));
+        } else {
+          return msg.channel.send(
+            "Something went wrong. Please try again later."
+          );
+        }
       } else {
         //failed, tell user to relog
         msg.author.send("Session expired. Please log in again");
