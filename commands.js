@@ -174,7 +174,8 @@ module.exports = {
         user.entitlements_token,
         user.valorant_id
       );
-
+      if (matches == null)
+        return msg.channel.send("Session expired! Please login again.");
       let str = "```";
       let i = 1;
       for (const match of matches) {
