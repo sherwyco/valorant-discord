@@ -53,5 +53,5 @@ client.on("message", msg => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-
+client.setActivity("Type -help");
 module.exports = client;
