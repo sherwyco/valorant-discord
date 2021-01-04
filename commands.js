@@ -30,13 +30,14 @@ const rankNames = {
 
 const rankStatImage = (msg, discord, user, userData, matchPointsSummary) => {
   //post rank from database
+
   let embed = new discord.MessageEmbed()
     .setColor("#ff4656")
     .setTitle(userData.valorant_name)
     .setAuthor(user.username, user.displayAvatarURL())
     .setURL(
       "https://blitz.gg/valorant/profile/" +
-        userData.valorant_name.replace("#", "-")
+        userData.valorant_name.replace("#", "-").replace(" ", "%20")
     )
     .setThumbnail(
       `https://valorant-sw.s3.amazonaws.com/ranks/${userData.valorant_rank}.png`
@@ -282,18 +283,17 @@ module.exports = {
   },
   show: async function(msg, discord) {
     const mentionedUser = msg.mentions.users;
-    if (mentionedUser != undefined) {
-      for (const user of mentionedUser) {
-        //check if mentioned user exists in db
-        const userData = await api.getUser(user[1].id);
-        if (userData != null) {
-          rankStatImage(msg, discord, user[1], userData);
-        } else {
-          msg.channel.send("No data found on user " + user[1].username);
-        }
+    if (mentionedUser.size === 0) {
+      return msg.channel.send("No mentioned user");
+    }
+    for (const user of mentionedUser) {
+      //check if mentioned user exists in db
+      const userData = await api.getUser(user[1].id);
+      if (userData != null) {
+        rankStatImage(msg, discord, user[1], userData);
+      } else {
+        msg.channel.send("No data found on user " + user[1].username);
       }
-    } else {
-      return msg.channel.send("No mentioned User.");
     }
   }
 };
