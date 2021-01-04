@@ -48,6 +48,9 @@ client.on("message", msg => {
     case "last":
       commands.last(msg);
       break;
+    case "show":
+      commands.show(msg, Discord);
+      break;
     default:
       break;
   }

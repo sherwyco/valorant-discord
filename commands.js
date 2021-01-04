@@ -28,34 +28,36 @@ const rankNames = {
   "24": "Radiant"
 };
 
-const rankStatImage = (msg, discord, user, matchPointsSummary) => {
+const rankStatImage = (msg, discord, user, userData, matchPointsSummary) => {
   //post rank from database
   let embed = new discord.MessageEmbed()
     .setColor("#ff4656")
-    .setTitle(user.valorant_name)
-    .setAuthor(msg.author.username, msg.author.displayAvatarURL())
+    .setTitle(userData.valorant_name)
+    .setAuthor(user.username, user.displayAvatarURL())
     .setURL(
       "https://blitz.gg/valorant/profile/" +
-        user.valorant_name.replace("#", "-")
+        userData.valorant_name.replace("#", "-")
     )
     .setThumbnail(
-      `https://valorant-sw.s3.amazonaws.com/ranks/${user.valorant_rank}.png`
+      `https://valorant-sw.s3.amazonaws.com/ranks/${userData.valorant_rank}.png`
     )
     .addFields(
       {
         name: " Rank ",
-        value: rankNames[`${user.valorant_rank}`],
+        value: rankNames[`${userData.valorant_rank}`],
         inline: true
       },
-      { name: " Points ", value: user.valorant_points, inline: true },
-      { name: " ELO ", value: user.valorant_elo, inline: true },
-      {
-        name: " Previous Match Results ",
-        value: matchPointsSummary.join(", "),
-        inline: false
-      }
+      { name: " Points ", value: userData.valorant_points, inline: true },
+      { name: " ELO ", value: userData.valorant_elo, inline: true }
     )
     .setTimestamp();
+  if (matchPointsSummary != null) {
+    embed.addFields({
+      name: " Previous Match Results ",
+      value: matchPointsSummary.join(", "),
+      inline: false
+    });
+  }
   return msg.channel.send(embed);
 };
 
@@ -188,7 +190,13 @@ module.exports = {
         user.valorant_id
       );
       if (matches != null) {
-        rankStatImage(msg, discord, user, matchPointsSummary(matches));
+        rankStatImage(
+          msg,
+          discord,
+          msg.author,
+          user,
+          matchPointsSummary(matches)
+        );
       } else {
         msg.channel.send("Session id expired. Please login again.");
       }
@@ -225,7 +233,6 @@ module.exports = {
           user.valorant_id
         );
         if (matches != null) {
-          rankStatImage(msg, discord, user, matchPointsSummary(matches));
         } else {
           return msg.channel.send(
             "Something went wrong. Please try again later."
@@ -271,6 +278,22 @@ module.exports = {
     } else {
       //must be logged in
       return msg.channel.send("Please log in to view your match history");
+    }
+  },
+  show: async function(msg, discord) {
+    const mentionedUser = msg.mentions.users;
+    if (mentionedUser != undefined) {
+      for (const user of mentionedUser) {
+        //check if mentioned user exists in db
+        const userData = await api.getUser(user[1].id);
+        if (userData != null) {
+          rankStatImage(msg, discord, user[1], userData);
+        } else {
+          msg.channel.send("No data found on user " + user[1].username);
+        }
+      }
+    } else {
+      return msg.channel.send("No mentioned User.");
     }
   }
 };
