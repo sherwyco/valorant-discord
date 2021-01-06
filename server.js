@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config(); //uncomment for dev environment
 
 const express = require("express");
 const app = express();
@@ -28,4 +28,4 @@ app.use(cors());
 const userRoute = require("./routes/users");
 app.use("/users", userRoute);
 
-app.listen(3000, () => console.log("server started"));
+app.listen(process.env.PORT || 3000, () => console.log("server started"));

@@ -16,7 +16,7 @@ const getToken = async (username, password) => {
     .post(BASE_URL, {
       client_id: "play-valorant-web-prod",
       nonce: "1",
-      redirect_uri: "https://beta.playvalorant.com/opt_in",
+      redirect_uri: "https://playvalorant.com/opt_in",
       response_type: "token id_token"
     })
     .catch(err => {
@@ -76,7 +76,7 @@ const registerUser = async (
   valorant_elo
 ) => {
   const response = await axios
-    .post("http://localhost:3000/users/register", {
+    .post(process.env.HOSTNAME_URL + "/users/register", {
       discord_id: discord_id,
       access_token: access_token,
       entitlements_token: entitlements_token,
@@ -97,7 +97,7 @@ const registerUser = async (
 
 const checkUserExist = async discord_id => {
   const response = await axios
-    .get("http://localhost:3000/users/" + discord_id)
+    .get(process.env.HOSTNAME_URL + "/users/" + discord_id)
     .then(res => {
       //user exists
       return true;
@@ -120,7 +120,7 @@ const updateUser = async (
   valorant_elo
 ) => {
   const instance = await axios
-    .patch("http://localhost:3000/users/" + discord_id, {
+    .patch(process.env.HOSTNAME_URL + "/users/" + discord_id, {
       access_token: access_token,
       entitlements_token: entitlements_token,
       valorant_id: valorant_id,
@@ -241,7 +241,7 @@ const getRankStats = async (access_token, entitlements_token, valorant_id) => {
 
 const getUser = async discord_id => {
   const response = await axios
-    .get("http://localhost:3000/users/" + discord_id)
+    .get(process.env.HOSTNAME_URL + "/users/" + discord_id)
     .then(res => {
       //user exists
       return res.data;

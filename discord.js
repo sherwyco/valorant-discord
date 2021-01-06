@@ -5,6 +5,7 @@ const client = new Discord.Client();
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  client.user.setActivity("Type -help");
 });
 
 const prefix = process.env.DISCORD_PREFIX;
@@ -46,6 +47,9 @@ client.on("message", msg => {
       break;
     case "last":
       commands.last(msg);
+      break;
+    case "show":
+      commands.show(msg, Discord);
       break;
     default:
       break;
