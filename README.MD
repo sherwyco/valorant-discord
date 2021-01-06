@@ -7,3 +7,5 @@ To run, clone the repository and create `.env` file in the root folder and add t
 `DISCORD_TOKEN=<your_token>`
 
 `DISCORD_PREFIX=<your_discord_bot_prefix>`
+
+`DOMAIN_URL=http://localhost:3000` make sure theres no trailing `/` at the end of your domain url.
