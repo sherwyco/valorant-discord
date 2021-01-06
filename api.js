@@ -76,7 +76,7 @@ const registerUser = async (
   valorant_elo
 ) => {
   const response = await axios
-    .post(process.env.HOSTNAME_URL + "/users/register", {
+    .post(process.env.DOMAIN_URL + "/users/register", {
       discord_id: discord_id,
       access_token: access_token,
       entitlements_token: entitlements_token,
@@ -97,7 +97,7 @@ const registerUser = async (
 
 const checkUserExist = async discord_id => {
   const response = await axios
-    .get(process.env.HOSTNAME_URL + "/users/" + discord_id)
+    .get(process.env.DOMAIN_URL + "/users/" + discord_id)
     .then(res => {
       //user exists
       return true;
@@ -120,7 +120,7 @@ const updateUser = async (
   valorant_elo
 ) => {
   const instance = await axios
-    .patch(process.env.HOSTNAME_URL + "/users/" + discord_id, {
+    .patch(process.env.DOMAIN_URL + "/users/" + discord_id, {
       access_token: access_token,
       entitlements_token: entitlements_token,
       valorant_id: valorant_id,
@@ -241,7 +241,7 @@ const getRankStats = async (access_token, entitlements_token, valorant_id) => {
 
 const getUser = async discord_id => {
   const response = await axios
-    .get(process.env.HOSTNAME_URL + "/users/" + discord_id)
+    .get(process.env.DOMAIN_URL + "/users/" + discord_id)
     .then(res => {
       //user exists
       return res.data;
