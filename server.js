@@ -1,4 +1,4 @@
-//require("dotenv").config(); //dev
+require("dotenv").config(); //uncomment for dev environment
 
 const express = require("express");
 const app = express();
