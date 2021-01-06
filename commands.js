@@ -1,4 +1,4 @@
-const api = require("./api.js"); //load discord bot
+const api = require("./api.js");
 
 const rankNames = {
   "0": "Unrated",
