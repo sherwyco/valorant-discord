@@ -1,4 +1,4 @@
-# Deprecation Notice - January 22, 2020.
+# Deprecation Notice - January 22, 2021.
 ## Valorant now shows the player's current rank rating (RR) thus I wont be developing this project futher.
 
 Simple Valorant bot for discord made with MongoDB, Express, NodeJS that shows your rank, elo, match history. More features will be added in the future.
